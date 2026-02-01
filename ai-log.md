@@ -178,3 +178,83 @@ These are the main potential issues in the current implementation.
 
 3. Directed vs. Delegated: Mastering Interaction Modes
 
+User: Refactor the calculate_total_salesfunction to include error handling. It should handle FileNotFoundError if the csv file doesn't exist and ValueError if the price or quantity are not valid numbers. Print informative error messages for each case.
+
+GitHub Copilot: ### [JavaScript Analyzer](file:///c%3A/Users/Jessi/Documents/Projects/Sales-Analyzer-Lab-2.1/JavaScript%20Analyzer)
+
+Refactor `calculateTotalSales` to improve error handling:  
+- Print an error if the file does not exist (FileNotFoundError equivalent).
+- Print an error if price or quantity are not valid numbers (ValueError equivalent).
+
+````javascript
+const fs = require('fs');
+const path = require('path');
+
+/**
+ * Calculates the total sales from a CSV file.
+ * Assumes the CSV has 'product_name', 'price', 'quantity' columns.
+ * @param {string} filename - The path to the CSV file.
+ * @returns {number} - The calculated total sales.
+ */
+function calculateTotalSales(filename) {
+  let total = 0.0;
+
+  try {
+    // ...existing code...
+    const fileContent = fs.readFileSync(filename, { encoding: 'utf8' });
+    // ...existing code...
+    const dataLines = lines.slice(1);
+
+    for (const line of dataLines) {
+      const columns = line.split(',');
+
+      if (columns.length === 3) {
+        const price = parseFloat(columns[1]);
+        const quantity = parseInt(columns[2]);
+
+        if (isNaN(price) || isNaN(quantity)) {
+          // ValueError equivalent
+          console.error(
+            `ValueError: Invalid number in row: "${line}". Price and quantity must be valid numbers.`
+          );
+          continue;
+        }
+        total += price * quantity;
+      }
+    }
+
+    return total;
+
+  } catch (error) {
+    // FileNotFoundError equivalent
+    if (error.code === 'ENOENT') {
+      console.error(`FileNotFoundError: The file '${filename}' does not exist.`);
+    } else {
+      console.error(`An unexpected error occurred: ${error.message}`);
+    }
+    return 0.0;
+  }
+}
+
+// ...existing code...
+````
+
+Made changes.
+
+User: Add a new function that identifies the top-selling product by total revenue (price * quantity). Then, modify the main block to call this new function and print the result. Ensure the output is clearly formatted.
+
+GitHub Copilot: Using "Apply Patch"
+
+Read [](file:///c%3A/Users/Jessi/Documents/Projects/Sales-Analyzer-Lab-2.1/JavaScript%20Analyzer#1-1), lines 1 to 60
+
+Read [](file:///c%3A/Users/Jessi/Documents/Projects/Sales-Analyzer-Lab-2.1/JavaScript%20Analyzer#61-61), lines 61 to 81
+
+Using "Apply Patch"
+
+
+```
+
+```
+The code now includes a new `getTopSellingProduct` function to identify the top-selling product by total revenue. The main block has been updated to call this function and print the result with clear formatting. Let me know if you want to test or further modify the output!
+
+Made changes.
