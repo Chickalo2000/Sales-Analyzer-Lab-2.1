@@ -33,20 +33,23 @@ function calculateTotalSales(filename) {
         const quantity = parseInt(columns[2]);
 
         // Basic validation for successful parsing
-        if (!isNaN(price) && !isNaN(quantity)) {
-          total += price * quantity;
-        } else {
-          console.warn(`Skipping malformed data in row: ${line}`);
+        if (isNaN(price) || isNaN(quantity)) {
+          // ValueError equivalent
+          console.error(
+            `ValueError: Invalid number in row: "${line}". Price and quantity must be valid numbers.`
+          );
+          continue;
         }
+        total += price * quantity;
       }
     }
 
     return total;
 
   } catch (error) {
-    // Handles file not found or reading errors (like Python's exception handling)
+    // FileNotFoundError equivalent
     if (error.code === 'ENOENT') {
-      console.error(`Error: The file '${filename}' was not found.`);
+      console.error(`FileNotFoundError: The file '${filename}' does not exist.`);
     } else {
       console.error(`An unexpected error occurred: ${error.message}`);
     }
