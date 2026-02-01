@@ -58,6 +58,50 @@ function calculateTotalSales(filename) {
 }
 
 // 3. Execution Block (Equivalent to Python's 'if __name__ == "__main__":')
+
+/**
+ * Identifies the top-selling product by total revenue (price * quantity).
+ * @param {string} filename - The path to the CSV file.
+ * @returns {{product: string, revenue: number}|null} - The top-selling product and its revenue, or null if not found.
+ */
+function getTopSellingProduct(filename) {
+  try {
+    const fileContent = fs.readFileSync(filename, { encoding: 'utf8' });
+    const lines = fileContent.split('\n').filter(line => line.trim() !== '');
+    const dataLines = lines.slice(1);
+    let topProduct = null;
+    let maxRevenue = -Infinity;
+
+    for (const line of dataLines) {
+      const columns = line.split(',');
+      if (columns.length === 3) {
+        const product = columns[0];
+        const price = parseFloat(columns[1]);
+        const quantity = parseInt(columns[2]);
+        if (isNaN(price) || isNaN(quantity)) {
+          continue;
+        }
+        const revenue = price * quantity;
+        if (revenue > maxRevenue) {
+          maxRevenue = revenue;
+          topProduct = product;
+        }
+      }
+    }
+    if (topProduct !== null) {
+      return { product: topProduct, revenue: maxRevenue };
+    } else {
+      return null;
+    }
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      console.error(`FileNotFoundError: The file '${filename}' does not exist.`);
+    } else {
+      console.error(`An unexpected error occurred: ${error.message}`);
+    }
+    return null;
+  }
+}
 function main() {
   // Define the path to the CSV file
   const salesDataFile = path.join(__dirname, 'sales_data.csv');
@@ -72,9 +116,16 @@ function main() {
 
   const totalSales = calculateTotalSales(salesDataFile);
 
+  const topProductInfo = getTopSellingProduct(salesDataFile);
+
   // Print the result, similar to Python's f-string formatting
   // .toFixed(2) ensures two decimal places for currency.
   console.log(`Total sales from ${path.basename(salesDataFile)}: $${totalSales.toFixed(2)}`);
+  if (topProductInfo) {
+    console.log(`Top-selling product: ${topProductInfo.product} (Revenue: $${topProductInfo.revenue.toFixed(2)})`);
+  } else {
+    console.log('No valid top-selling product found.');
+  }
 }
 
 main();
