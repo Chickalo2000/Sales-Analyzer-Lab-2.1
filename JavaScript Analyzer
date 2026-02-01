@@ -8,7 +8,7 @@ const path = require('path');
  * @returns {number} - The calculated total sales.
  */
 function calculateTotalSales(filename) {
-  let total = 0.0;
+  let total = 0.0; 
 
   try {
     // 1. Read the file synchronously (like Python's 'with open...')
